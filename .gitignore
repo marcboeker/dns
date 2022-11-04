@@ -1,0 +1,7 @@
+*.db
+blocklist.txt
+config/dev
+config/prod
+config/prod.go
+dns
+.vscode
