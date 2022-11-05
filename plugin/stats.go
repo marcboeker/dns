@@ -14,19 +14,13 @@ type Stats struct {
 	opts StatsOpts
 }
 type StatsOpts struct {
-	DBPath       string
+	DB           *sql.DB
 	TrackStats   bool
 	TrackQueries bool
 }
 
 func NewStats(opts StatsOpts) (*Stats, error) {
-	s := Stats{opts: opts}
-
-	var err error
-	s.db, err = sql.Open("sqlite3", opts.DBPath)
-	if err != nil {
-		return nil, err
-	}
+	s := Stats{opts: opts, db: opts.DB}
 
 	if err := s.initDB(); err != nil {
 		return nil, err

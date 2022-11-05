@@ -12,15 +12,10 @@ type Blocker struct {
 	hosts map[string]bool
 }
 
-func NewBlocker(dbName string) (*Blocker, error) {
-	db, err := sql.Open("sqlite3", dbName)
-	if err != nil {
-		return nil, err
-	}
-
+func NewBlocker(db *sql.DB) (*Blocker, error) {
 	hosts := make(map[string]bool)
 
-	rows, err := db.Query("SELECT hostname FROM hosts")
+	rows, err := db.Query("SELECT hostname FROM blocked_hosts")
 	if err != nil {
 		log.Fatalln(err)
 	}

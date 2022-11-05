@@ -26,7 +26,7 @@ func main() {
 	defer db.Close()
 
 	if _, err := db.Exec(`
-		CREATE TABLE IF NOT EXISTS hosts (
+		CREATE TABLE IF NOT EXISTS blocked_hosts (
 			hostname string PRIMARY KEY
 		)
 	`); err != nil {
@@ -38,7 +38,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	stmt, err := db.Prepare("INSERT INTO hosts VALUES(?) ON CONFLICT DO NOTHING")
+	stmt, err := db.Prepare("INSERT INTO blocked_hosts VALUES(?) ON CONFLICT DO NOTHING")
 	if err != nil {
 		log.Fatalln(err)
 	}

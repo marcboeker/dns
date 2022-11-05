@@ -1,11 +1,14 @@
 package config
 
 import (
+	"database/sql"
 	"os"
 
-	"github.com/marcboeker/dns/plugin"
-
 	_ "embed"
+
+	_ "github.com/mattn/go-sqlite3"
+
+	"github.com/marcboeker/dns/plugin"
 )
 
 // Generate dev certs via `mkcert -install && mkcert localhost`
@@ -22,6 +25,11 @@ var devKey []byte
 
 // dev prepares a config for local development.
 func dev() (*Config, error) {
+	db, err := sql.Open("sqlite3", "dns.db")
+	if err != nil {
+		return nil, err
+	}
+
 	// Possible URL schemes are tcp://, udp:// or tcp-tls:// for DoT.
 	proxy, err := plugin.NewProxy("tcp-tls://one.one.one.one:853")
 	if err != nil {
@@ -29,7 +37,7 @@ func dev() (*Config, error) {
 	}
 
 	stats, err := plugin.NewStats(plugin.StatsOpts{
-		DBPath:       "stats.db",
+		DB:           db,
 		TrackStats:   true, // Count queries per hostname
 		TrackQueries: true, // Log all queries with a timestamp
 	})
@@ -38,7 +46,7 @@ func dev() (*Config, error) {
 	}
 
 	// Update blocklist via `make update-blocklist`
-	blocker, err := plugin.NewBlocker("blocklist.db")
+	blocker, err := plugin.NewBlocker(db)
 	if err != nil {
 		return nil, err
 	}

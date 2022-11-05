@@ -9,5 +9,8 @@ run:
 
 update-blocklist:
 	curl -o blocklist.txt https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
-	go run cmd/blocker/main.go blocklist.txt blocklist.db
+	go run cmd/blocker/main.go blocklist.txt dns.db
 	rm blocklist.txt
+
+test:
+	go test -v ./...
